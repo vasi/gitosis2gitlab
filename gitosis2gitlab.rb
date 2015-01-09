@@ -87,7 +87,8 @@ def passthrough(user)
   config.access?(user, repo, write) or raise "Access denied!"
 
   translated = translate_repo(repo, GITLAB_GROUP)
-  exec('ssh', '-i', SSH_KEY, '-l', USER, HOST, command, translated)
+  run = ['ssh', '-i', SSH_KEY, '-l', USER, HOST, command, translated]
+  exec(*run)
 end
 
 def run(args)
