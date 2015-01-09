@@ -83,7 +83,8 @@ def passthrough(user)
   repo = md[2]
   write = (command != 'git-receive-pack')
 
-  config = GitosisConfig.new(GITOSIS_CONFIG)
+  conffile = File.join(GITOSIS_CONFIG, 'gitosis.conf')
+  config = GitosisConfig.new(conffile)
   config.access?(user, repo, write) or raise "Access denied!"
 
   translated = translate_repo(repo, GITLAB_GROUP)
