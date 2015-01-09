@@ -77,7 +77,7 @@ end
 # Pass through git commands to host
 def passthrough(user)
   orig = ENV['SSH_ORIGINAL_COMMAND']
-  md = %r{^(git-(?:receive|upload)-pack) '([\w./-]+)'$}.match(orig) \
+  md = %r{^(git-(?:receive|upload)-pack) '([\w./-]+)\.git'$}.match(orig) \
     or raise 'Bad command'
   command = md[1]
   repo = md[2]
@@ -88,7 +88,7 @@ def passthrough(user)
   config.access?(user, repo, write) or raise "Access denied!"
 
   translated = translate_repo(repo, GITLAB_GROUP)
-  run = ['ssh', '-i', SSH_KEY, '-l', USER, HOST, command, translated]
+  run = ['ssh', '-i', SSH_KEY, '-l', USER, HOST, command, translated + '.git']
   exec(*run)
 end
 
