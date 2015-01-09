@@ -68,7 +68,7 @@ def authorized_keys
   Dir[keys].each do |keyfile|
     user = File.basename(keyfile, '.pub')
     key = IO.read(keyfile).chomp
-    puts "command=\"#{me}\ #{user}\"," +
+    puts "command=\"#{me}\ passthrough #{user}\"," +
       "no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty " +
       key
   end
