@@ -77,7 +77,7 @@ end
 # Pass through git commands to host
 def passthrough(user)
   orig = ENV['SSH_ORIGINAL_COMMAND']
-  md = %{^(git-(?:receive|upload)-pack) '([\d./-])'$}.match(orig) \
+  md = r%{^(git-(?:receive|upload)-pack) '([\d./-])'$}.match(orig) \
     or raise 'Bad command'
   command = md[1]
   repo = md[2]
