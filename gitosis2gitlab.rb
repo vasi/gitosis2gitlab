@@ -63,11 +63,12 @@ end
 # Setup for use
 def authorized_keys
   # Generate authorized keys
+  me = File.realpath($0)
   keys = File.join(GITOSIS_CONFIG, 'keydir', '*.pub')
   Dir[keys].each do |keyfile|
     user = File.basename(keyfile, '.pub')
     key = IO.read(keyfile).chomp
-    puts "command=\"#$0\ #{user}\"," +
+    puts "command=\"#{me}\ #{user}\"," +
       "no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty " +
       key
   end
