@@ -81,7 +81,7 @@ def passthrough(user)
     or raise 'Bad command'
   command = md[1]
   repo = md[2]
-  write = (command != 'git-receive-pack')
+  write = (command != 'git-upload-pack')
 
   conffile = File.join(GITOSIS_CONFIG, 'gitosis.conf')
   config = GitosisConfig.new(conffile)
