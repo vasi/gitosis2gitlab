@@ -50,6 +50,7 @@ On gitlab.example.com:
 cd
 git clone https://gitlab.com/vasi/gitosis2gitlab.git
 ~/gitosis2gitlab/repo-reorg - ~/repositories /var/opt/gitlab/git-data/repositories/imported
+chown -R git /var/opt/gitlab/git-data/repositories/imported
 ```
 
 Now switch your DNS so that gitosis.example.com points to gitosis2gitlab.example.com . All your existing git repos should still work, but now they're connected to GitLab instead of Gitosis!
