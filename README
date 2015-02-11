@@ -1,0 +1,28 @@
+DESCRIPTION
+
+LICENSE
+
+HOWTO
+
+Suppose you have these servers:
+  - gitosis.example.com
+  - gitlab.example.com
+  - gitosis2gitlab.example.com
+
+On gitlab.example.com:
+  - rsync over repos
+      rsync -avzP gitosis.example.com:~git/repositories/ ~/repositories/
+  - create an 'imported' group in Gitlab
+  - reorganize repos in imported dir
+      mkdir -p /var/opt/gitlab/git-data/repositories/imported
+
+  - add a user for the proxy
+  - add SSH pubkey for proxy user
+
+
+On gitosis2gitlab.example.com:
+  - Keep server SSH keys the same
+  - Add git user
+  - Create configuration file
+  - Add SSH privkey for proxy user
+  - Create authorized_keys

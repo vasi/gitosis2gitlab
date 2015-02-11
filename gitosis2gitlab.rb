@@ -1,19 +1,8 @@
 #!/usr/bin/ruby
 
-HOST = 'gitlab.ewdev.ca'
-USER = 'git'
-SSH_KEY = '.ssh/id_rsa'
-GITOSIS_CONFIG = 'gitosis-admin'
-GITLAB_GROUP = 'imported'
-
-# Translate gitosis repo name to gitlab repo name
-def translate_repo(repo, group)
-  return group + '/' + repo.gsub(%r{/}, '-')
-end
-
-
 require 'inifile'
 require 'fileutils'
+require 'yaml'
 
 class GitosisConfig
   class Group
@@ -60,11 +49,39 @@ class GitosisConfig
   end
 end
 
+
+# Config file for gitosis2gitlab
+class Config
+  CONFFILE = 'gitosis2gitlab.yaml'
+
+  attr_reader :gitlab_host, :gitlab_key, :gitlab_group, :dir_separator
+
+  def initialize
+    file = File.join(File.dirname(__FILE__), CONFFILE)
+    @conf = YAML.load_file(file)
+
+    @gitlab_group = @conf['group'] || 'imported'
+    @dir_separator = @conf['separator'] || '-'
+    @gitlab_key = @conf['key'] || '.ssh/id_rsa'
+
+    @gitlab_host = @conf['host'] or raise "Need a host to connect to!"
+  end
+
+  def translate(repo)
+    return group + '/' + repo.gsub(%r{/}, dir_separator)
+  end
+
+  def gitosis_config
+    return File.join(File.dirname(__FILE__), 'gitosis-admin')
+  end
+end
+
+
 # Setup for use
-def authorized_keys
+def authorized_keys(config)
   # Generate authorized keys
   me = File.realpath($0)
-  keys = File.join(GITOSIS_CONFIG, 'keydir', '*.pub')
+  keys = File.join(config.gitosis_config, 'keydir', '*.pub')
   Dir[keys].each do |keyfile|
     user = File.basename(keyfile, '.pub')
     key = IO.read(keyfile).chomp
@@ -75,7 +92,7 @@ def authorized_keys
 end
 
 # Pass through git commands to host
-def passthrough(user)
+def passthrough(config, user)
   orig = ENV['SSH_ORIGINAL_COMMAND']
   md = %r{^(git-(?:receive|upload)-pack) '([\w./-]+)\.git'$}.match(orig) \
     or raise 'Bad command'
@@ -83,20 +100,22 @@ def passthrough(user)
   repo = md[2]
   write = (command != 'git-upload-pack')
 
-  conffile = File.join(GITOSIS_CONFIG, 'gitosis.conf')
+  conffile = File.join(config.gitosis_config, 'gitosis.conf')
   config = GitosisConfig.new(conffile)
   config.access?(user, repo, write) or raise "Access denied!"
 
-  translated = translate_repo(repo, GITLAB_GROUP)
-  run = ['ssh', '-i', SSH_KEY, '-l', USER, HOST, command, translated + '.git']
+  translated = config.translate(repo)
+  run = ['ssh', '-i', config.gitlab_key, config.gitlab_host, command,
+    translated + '.git']
   exec(*run)
 end
 
 def run(args)
+  config = Config.new
   cmd = args.shift
   case cmd
-    when 'authorized_keys'; authorized_keys
-    when 'passthrough'; passthrough(*args)
+    when 'authorized_keys'; authorized_keys(config)
+    when 'passthrough'; passthrough(config, *args)
     else puts "Unknown command #{cmd}"
   end
 end
