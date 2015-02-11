@@ -1,6 +1,5 @@
 DESCRIPTION
 
-LICENSE
 
 HOWTO
 
@@ -32,6 +31,8 @@ cat ~git/.ssh/id_rsa.pub
 ** Copy your gitosis-admin directory over:
 ```git clone git@gitosis.example.com:gitosis-admin.git ~git/gitosis2gitlab/gitosis-admin```
 ** Edit ~git/gitosis2gitlab/gitosis2gitlab.yaml, change the ```host``` to ```git@gitlab.example.com```
+** Make sure we know about that host:
+```ssh-keyscan gitlab.example.com | sudo -u git tee -a ~git/.ssh/known_hosts```
 ** Create an authorized_keys file:
 ```~git/gitosis2gitlab/gitosis2gitlab.rb authorized_keys | sudo -u git dd of=~git/.ssh/authorized_keys```
 
