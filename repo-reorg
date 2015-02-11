@@ -5,7 +5,7 @@ src="$2"
 dst="$3"
 
 mkdir -p "$dst"
-find "$src" -name '*.git' -prune -printf '%P\n' | while read repo; do
+find "$src" -name '*.git' -prune -printf '%P\n' | sort | while read repo; do
   echo "$repo"
   newname=$(echo $repo | tr / "$sep")
   rm -rf "$dst/$newname"

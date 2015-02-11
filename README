@@ -5,24 +5,49 @@ LICENSE
 HOWTO
 
 Suppose you have these servers:
-  - gitosis.example.com
-  - gitlab.example.com
-  - gitosis2gitlab.example.com
+* gitosis.example.com
+* gitlab.example.com
+* gitosis2gitlab.example.com
+
+I will assume gitlab.example.com and gitosis2gitlab are running Ubuntu 14.04, but other distributions should work with minor changes.
+
+On gitosis2gitlab.example.com:
+* We need the same SSH key to be used for this server as the old one, so clients don't break:
+```
+rsync -av root@gitosis.example.com:/etc/ssh/*key* /etc/ssh/
+service ssh restart
+```
+* Add a git user:
+```useradd -m git```
+* Create a SSH key for that user:
+```
+sudo -u git ssh-keygen -t rsa -N '' -f ~git/.ssh/id_rsa
+cat ~git/.ssh/id_rsa.pub
+```
+* Checkout gitosis2gitlab:
+```sudo -u git -i git clone https://gitlab.com/vasi/gitosis2gitlab.git```
+* Configure gitosis2gitlab
+** Edit ~git/gitosis2gitlab/gitosis2gitlab.yaml
+  - Create configuration file
+  - Add SSH privkey for proxy user
+  - Create authorized_keys
 
 On gitlab.example.com:
-  - rsync over repos
-      rsync -avzP gitosis.example.com:~git/repositories/ ~/repositories/
-  - create an 'imported' group in Gitlab
-  - reorganize repos in imported dir
-      mkdir -p /var/opt/gitlab/git-data/repositories/imported
-
+* In the GitLab UI
+** Create a new group ```imported```
+** Create a GitLab user ```gitosis2gitlab```
+*** Give this user access to the group ```imported```
+*** Add the public key from git@gitosis2gitlab.example.com as a SSH key for this user
+* Put your repos in the proper locations
+** Rsync over your repos:
+```rsync -avz gitosis.example.com:~git/repositories/ ~/repositories/```
+** Reorganize your repos into the ```imported``` group's directory:
+```
+cd
+git clone https://gitlab.com/vasi/gitosis2gitlab.git
+~/gitosis2gitlab/repo-reorg - ~/repositories /var/opt/gitlab/git-data/repositories/imported
+```
   - add a user for the proxy
   - add SSH pubkey for proxy user
 
 
-On gitosis2gitlab.example.com:
-  - Keep server SSH keys the same
-  - Add git user
-  - Create configuration file
-  - Add SSH privkey for proxy user
-  - Create authorized_keys
