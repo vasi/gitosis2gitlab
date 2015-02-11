@@ -1,0 +1,12 @@
+# Where is the new gitlab installation?
+##### YOU MUST EDIT THIS ITEM #####
+host: git@gitlab.example.com
+
+# Which SSH key allows access to gitlab?
+key: .ssh/id_rsa
+
+# Under what gitlab group were your repos imported?
+group: imported
+
+# What replaces / in the names of repos on gitlab?
+separator: "-"
