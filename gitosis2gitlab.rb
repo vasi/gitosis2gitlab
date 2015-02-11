@@ -101,8 +101,8 @@ def passthrough(config, user)
   write = (command != 'git-upload-pack')
 
   conffile = File.join(config.gitosis_config, 'gitosis.conf')
-  config = GitosisConfig.new(conffile)
-  config.access?(user, repo, write) or raise "Access denied!"
+  gitosis_config = GitosisConfig.new(conffile)
+  gitosis_config.access?(user, repo, write) or raise "Access denied!"
 
   translated = config.translate(repo)
   run = ['ssh', '-i', config.gitlab_key, config.gitlab_host, command,
