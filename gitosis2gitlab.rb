@@ -51,7 +51,7 @@ end
 
 
 # Config file for gitosis2gitlab
-class Config
+class G2GConfig
   CONFFILE = 'gitosis2gitlab.yaml'
 
   attr_reader :gitlab_host, :gitlab_key, :gitlab_group, :dir_separator
@@ -111,7 +111,7 @@ def passthrough(config, user)
 end
 
 def run(args)
-  config = Config.new
+  config = G2GConfig.new
   cmd = args.shift
   case cmd
     when 'authorized_keys'; authorized_keys(config)
