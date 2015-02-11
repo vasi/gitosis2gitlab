@@ -24,13 +24,16 @@ service ssh restart
 sudo -u git ssh-keygen -t rsa -N '' -f ~git/.ssh/id_rsa
 cat ~git/.ssh/id_rsa.pub
 ```
+* Install necessary packages: ```sudo apt-get install git bundler```
 * Checkout gitosis2gitlab:
 ```sudo -u git -i git clone https://gitlab.com/vasi/gitosis2gitlab.git```
+** Install Ruby gems: ```sudo bundle install --gemfile ~git/gitosis2gitlab/Gemfile --system```
 * Configure gitosis2gitlab
-** Edit ~git/gitosis2gitlab/gitosis2gitlab.yaml
-  - Create configuration file
-  - Add SSH privkey for proxy user
-  - Create authorized_keys
+** Copy your gitosis-admin directory over:
+```git clone git@gitosis.example.com:gitosis-admin.git ~git/gitosis2gitlab/gitosis-admin```
+** Edit ~git/gitosis2gitlab/gitosis2gitlab.yaml, change the ```host``` to ```git@gitlab.example.com```
+** Create an authorized_keys file:
+```~git/gitosis2gitlab/gitosis2gitlab.rb authorized_keys | sudo -u git dd of=~git/.ssh/authorized_keys```
 
 On gitlab.example.com:
 * In the GitLab UI
@@ -47,7 +50,5 @@ cd
 git clone https://gitlab.com/vasi/gitosis2gitlab.git
 ~/gitosis2gitlab/repo-reorg - ~/repositories /var/opt/gitlab/git-data/repositories/imported
 ```
-  - add a user for the proxy
-  - add SSH pubkey for proxy user
 
-
+Now switch your DNS so that gitosis.example.com points to gitosis2gitlab.example.com . All your existing git repos should still work, but now they're connected to GitLab instead of Gitosis!
