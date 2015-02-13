@@ -8,8 +8,10 @@ usage() {
   echo
   echo "The REPO_SRC indicates where to get repositories from. It can be:"
   echo "  * A path to a local directory, or"
-  echo "  * A domain name or IP address of a Gitosis server, or"
-  echo "  * An rsync source specification, ending with a slash."
+  echo "  * A domain name or IP address of a Gitosis server,"
+  echo "    eg: gitosis.example.com, or"
+  echo "  * An rsync source specification, ending with a slash,"
+  echo "    eg: 'user@host:/path/'"
   echo
   echo "Options:"
   echo "  -g GROUP       # GitLab group under which the repos should live"
