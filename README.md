@@ -1,7 +1,16 @@
-DESCRIPTION
+Once upon a time, the easiest way to setup a git server was with [Gitosis](http://git-scm.com/book/en/v1/Git-on-the-Server-Gitosis). But now, Gitosis hasn't been maintained for years! There's also much nicer ways to host  your own git repos, like [GitLab](https://about.gitlab.com/).
+
+Unfortunately, if you've been using Gitosis for years, you probably have lots of working copies sitting around the reference your Gitosis server. You may also have infrastructure that expects Gitosis remotes to stay working, such as continuous integration or issue tracking systems. If you move to GitLab, those will all break!
+
+gitosis2gitlab is a bridge from Gitosis remotes to your GitLab server. Just change your DNS settings so your old Gitosis domain points to your gitosis2gitlab server, and it will route git requests to your new GitLab server. Both reading (clone) and writing (push) are supported! Furthermore, gitosis2gitlab will obey the Gitosis permissions you already have.
+
+Configuration
+=============
 
 
-HOWTO
+
+Tutorial
+========
 
 Suppose you have these servers:
 * gitosis.example.com
@@ -49,7 +58,7 @@ On gitlab.example.com:
 ```
 cd
 git clone https://gitlab.com/vasi/gitosis2gitlab.git
-~/gitosis2gitlab/repo-reorg - ~/repositories /var/opt/gitlab/git-data/repositories/imported
+~/gitosis2gitlab/scripts/repo-reorg - ~/repositories /var/opt/gitlab/git-data/repositories/imported
 chown -R git /var/opt/gitlab/git-data/repositories/imported
 ```
 
