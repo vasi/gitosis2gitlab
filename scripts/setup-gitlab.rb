@@ -11,6 +11,9 @@ class Setup
     @group = 'imported'
     params.each { |k, v| instance_variable_set("@#{k}", v) }
 
+    # Could be the key itself, or a file containing it
+    @pubkey = IO.read(@pubkey) if File.exists?(@pubkey)
+
     @uri = URI(@server)
     @http = Net::HTTP.start(@uri.host, @uri.port,
       :use_ssl => @uri.scheme == 'https')
