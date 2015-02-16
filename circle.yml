@@ -14,7 +14,7 @@ dependencies:
     - sudo cp -r pubkeys ~git/gitosis2gitlab/gitosis-admin/
 
     # Setup DNS
-    - echo '127.0.0.1 gitosis.example.com' >> /etc/hosts
+    - echo '127.0.0.1 gitosis.example.com' | sudo tee -a /etc/hosts
 
 test:
   override:
