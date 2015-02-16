@@ -121,7 +121,7 @@ class Setup
     group = group_create(@group)
     user = user_create(@user)
     group_add(group['id'], user['id'])
-    key_create(user['id'], KEY_TITLE, IO.read(@pubkey))
+    key_create(user['id'], KEY_TITLE, @pubkey)
   end
 end
 
