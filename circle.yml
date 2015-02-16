@@ -22,5 +22,4 @@ dependencies:
 
 test:
   override:
-    - git clone git@gitosis.example.com:gitosis/gitlab.git cloned
-
+    - 'ssh-add && git clone git@gitosis.example.com:gitosis/gitlab.git cloned'
