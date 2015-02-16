@@ -72,7 +72,8 @@ setup_ssh() {
 
 ensure_prerequisites() {
   git --version >/dev/null || apt-get install -y git
-  bundle --version >/dev/null || apt-get install -y bundler
+  sudo bundle --version >/dev/null || apt-get install -y bundler \
+    || apt-get install -y ruby-bundler
 }
 
 install_gitosis2gitlab() {
