@@ -1,11 +1,10 @@
 dependencies:
   override:
-    - (echo '-----BEGIN RSA PRIVATE KEY-----'; echo $PRIVKEY | perl -pe 's/ /\n/g'; echo '-----END RSA PRIVATE KEY-----') > id_rsa
-
     # Setup proxy
     - ./scripts/setup-proxy.sh '' gitlab.com
 
     # Fixup SSH key for access to gitlab.com
+    - (echo '-----BEGIN RSA PRIVATE KEY-----'; echo $PRIVKEY | perl -pe 's/ /\n/g'; echo '-----END RSA PRIVATE KEY-----') > id_rsa
     - sudo install -o git -m 0700 id_rsa ~git/.ssh/
     - sudo rm ~git/.ssh/id_rsa.pub
 
