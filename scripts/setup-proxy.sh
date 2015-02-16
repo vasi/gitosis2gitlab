@@ -86,16 +86,13 @@ setup_ssh() {
 
 ensure_prerequisites() {
   git --version >/dev/null || sudo apt-get install -y git
-  sudo bundle --version >/dev/null || sudo apt-get install -y bundler \
-    || sudo apt-get install -y ruby-bundler
 }
 
 install_gitosis2gitlab() {
-  # Checkout gitosis2gitlab, install gems
+  # Checkout gitosis2gitlab
   if [ ! -e "$homedir/gitosis2gitlab" ]; then
     sudo -u "$user" -i git clone https://gitlab.com/vasi/gitosis2gitlab.git
   fi
-  sudo bundle install --system --gemfile "$homedir/gitosis2gitlab/Gemfile"
 
   # Fetch the gitosis-admin directory, so we have the config files and such
   if [ ! -e "$homedir/gitosis2gitlab/gitosis-admin" ]; then
