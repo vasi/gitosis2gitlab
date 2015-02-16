@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-require 'fileutils'
+require 'pathname'
 require 'yaml'
 
 class GitosisConfig
@@ -75,7 +75,7 @@ class G2GConfig
   attr_reader :gitlab_host, :gitlab_key, :gitlab_group, :dir_separator
 
   def initialize
-    file = File.join(File.dirname(__FILE__), CONFFILE)
+    file = Pathname.new(__FILE__).parent.join(CONFFILE).to_s
     @conf = YAML.load_file(file)
 
     @gitlab_group = @conf['group'] || 'imported'
@@ -90,10 +90,10 @@ class G2GConfig
   end
 
   def gitosis_admin
-    return File.join(File.dirname(__FILE__), 'gitosis-admin')
+    return Pathname.new(__FILE__).parent.join('gitosis-admin')
   end
   def gitosis_config
-    return GitosisConfig.new(File.join(gitosis_admin, 'gitosis.conf'))
+    return GitosisConfig.new(gitosis_admin.join('gitosis.conf').to_s)
   end
 end
 
@@ -101,11 +101,11 @@ end
 # Setup for use
 def authorized_keys(config)
   # Generate authorized keys
-  me = File.realpath($0)
-  keys = File.join(config.gitosis_admin, 'keydir', '*.pub')
-  Dir[keys].each do |keyfile|
-    user = File.basename(keyfile, '.pub')
-    key = IO.read(keyfile).chomp
+  me = Pathname.new($0).realpath.to_s
+  keys = config.gitosis_admin.join('keydir', '*.pub')
+  Pathname.glob(keys.to_s).each do |keyfile|
+    user = keyfile.basename('.pub')
+    key = IO.read(keyfile.to_s).chomp
     puts "command=\"#{me}\ passthrough #{user}\"," +
       "no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty " +
       key
