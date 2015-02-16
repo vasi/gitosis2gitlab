@@ -9,7 +9,7 @@ dependencies:
     # Generate a fake gitosis-admin dir
     - cp -R test/gitosis-admin gitosis-admin
     - mkdir -p gitosis-admin/keydir
-    - cp ~/.ssh/id_rsa.pub > gitosis-admin/keydir/testuser.pub
+    - cp ~/.ssh/id_rsa.pub gitosis-admin/keydir/testuser.pub
 
     # Setup proxy
     - ./scripts/setup-proxy.sh -k id_rsa -a gitosis-admin '' gitlab.com
