@@ -40,9 +40,13 @@ parse_opts() {
 copy_server_keys() {
   # If we don't have the same server SSH keys as gitosis, clients will
   # complain. Copy them over, and restart SSH.
-  sudo SSH_AUTH_SOCK="$SSH_AUTH_SOCK" \
-    rsync "root@${gitosis_server}:/etc/ssh/*key*" /etc/ssh/
-  sudo service ssh restart
+  if [ -n "$gitosis_server" ]; then
+    sudo SSH_AUTH_SOCK="$SSH_AUTH_SOCK" \
+      rsync "root@${gitosis_server}:/etc/ssh/*key*" /etc/ssh/
+    sudo service ssh restart
+  else
+    echo "Warning! You will not have the SSH keys from your gitosis server."
+  fi
 }
 
 add_user() {
@@ -83,8 +87,12 @@ install_gitosis2gitlab() {
 
   # Fetch the gitosis-admin directory, so we have the config files and such
   if [ ! -e "$homedir/gitosis2gitlab/gitosis-admin" ]; then
-    git clone "$user@${gitosis_server}:gitosis-admin.git" \
-      "$homedir/gitosis2gitlab/gitosis-admin"
+    if [ -n "$gitosis_server" ]; then
+      git clone "$user@${gitosis_server}:gitosis-admin.git" \
+        "$homedir/gitosis2gitlab/gitosis-admin"
+    else
+      echo "Warning! You'll need to fetch the gitosis-admin directory yourself!"
+    fi
   fi
 
   # Create an authorized_keys file, so users can access gitosis2gitlab

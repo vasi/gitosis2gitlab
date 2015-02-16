@@ -1,3 +1,21 @@
+dependencies:
+  override:
+    # Setup access to gitlab for our new user
+    - install -d -o git -m 0700 ~git/.ssh
+    - echo $PRIVKEY > id_rsa
+    - install -o git -m 0600 id_rsa ~git/.ssh/
+
+    # Setup proxy
+    - ./scripts/setup-proxy.sh '' gitlab.com
+
+    # Use a fake gitosis-admin dir
+    - cp -R test/gitosis-admin ~git/gitosis2gitlab/
+    - ssh-add -L | head -n1 > ~git/gitosis2gitlab/gitosis-admin/pubkeys/testuser.pub
+
+    # Setup DNS
+    - echo '127.0.0.1 gitosis.example.com' >> /etc/hosts
+
 test:
   override:
-    - false
+    - git clone git@gitosis.example.com:gitosis/gitlab.git cloned
+
