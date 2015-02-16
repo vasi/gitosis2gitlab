@@ -30,11 +30,6 @@ parse_opts() {
   gitosis_server="$1"
   gitlab_server="$2"
   [ -n "$gitlab_server" ] || usage
-
-  if ! apt-get --version > /dev/null; then
-    echo "This script is only verified to work on Debian-based Linux distros."
-    echo "Try seting up gitosis2gitlab manually, instead."
-  fi
 }
 
 copy_server_keys() {
