@@ -11,7 +11,7 @@ dependencies:
     - sudo cp -R test/gitosis-admin ~git/gitosis2gitlab/
     - mkdir -p pubkeys
     - ssh-add -L | head -n1 > pubkeys/testuser.pub
-    - sudo install -o git pubkeys ~git/gitosis2gitlab/gitosis-admin/
+    - sudo cp -r pubkeys ~git/gitosis2gitlab/gitosis-admin/
 
     # Setup DNS
     - echo '127.0.0.1 gitosis.example.com' >> /etc/hosts
