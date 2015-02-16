@@ -72,7 +72,7 @@ setup_ssh() {
   privkey="$homedir/.ssh/id_rsa"
   pubkey="$homedir/.ssh/id_rsa.pub"
   if [ ! -f "$privkey" ]; then
-    if [ -z "$useprivkey" -a -f "$useprivkey" ]; then
+    if [ -n "$useprivkey" -a -f "$useprivkey" ]; then
       sudo install -o "$user" -m 0600 "$useprivkey" "$homedir/.ssh/"
     else
       sudo -u "$user" ssh-keygen -t rsa -N '' -f "$homedir/.ssh/id_rsa"
