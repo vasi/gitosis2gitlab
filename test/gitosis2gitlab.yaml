@@ -1,4 +1,4 @@
 host: git@gitlab.com
 key: .ssh/id_rsa
-group: imported
+group: vasi
 separator: "2"

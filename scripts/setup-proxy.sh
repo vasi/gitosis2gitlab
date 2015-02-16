@@ -10,19 +10,29 @@ usage() {
   echo "server. GITLAB_SERVER should be the domain of your new GitLab server."
   echo
   echo "Options:"
-  echo "  -u USER  # The user that gitosis expects to run under (default: git)"
+  echo "  -u USER      # The user for gitosis to run under (default: git)"
+  echo "  -a ADMINDIR  # A gitosis-admin directory to use"
+  echo "               # (default: copy from server)"
+  echo "  -k PRIVKEY   # A SSH private key for access to GITLAB_SERVER"
+  echo "               # (default: generate a new one)"
   exit 2
 }
 
 parse_opts() {
   user="git"
-  while getopts "u:h" opt; do
+  while getopts "u:a:k:h" opt; do
     case "$opt" in
       h|\?)
         usage
         ;;
       u)
         user="$OPTARG"
+        ;;
+      a)
+        admindir="$OPTARG"
+        ;;
+      k)
+        useprivkey="$OPTARG"
         ;;
     esac
   done
@@ -62,7 +72,11 @@ setup_ssh() {
   privkey="$homedir/.ssh/id_rsa"
   pubkey="$homedir/.ssh/id_rsa.pub"
   if [ ! -f "$privkey" ]; then
-    sudo -u "$user" ssh-keygen -t rsa -N '' -f "$homedir/.ssh/id_rsa"
+    if [ -z "$useprivkey" -a -f "$useprivkey" ]; then
+      sudo install -o "$user" -m 0600 "$useprivkey" "$homedir/.ssh/"
+    else
+      sudo -u "$user" ssh-keygen -t rsa -N '' -f "$homedir/.ssh/id_rsa"
+    fi
   fi
 
   # Add GitLab to our known_hosts, so SSH doesn't complain
@@ -85,7 +99,9 @@ install_gitosis2gitlab() {
 
   # Fetch the gitosis-admin directory, so we have the config files and such
   if [ ! -e "$homedir/gitosis2gitlab/gitosis-admin" ]; then
-    if [ -n "$gitosis_server" ]; then
+    if [ -z "$admindir" ]; then
+      sudo cp -R "$admindir" "$homedir/gitosis2gitlab/gitosis-admin"
+    elif [ -n "$gitosis_server" ]; then
       git clone "$user@${gitosis_server}:gitosis-admin.git" \
         "$homedir/gitosis2gitlab/gitosis-admin"
     else
@@ -101,9 +117,11 @@ install_gitosis2gitlab() {
 summarize() {
   echo
   echo "Done! Please edit gitosis2gitlab.yaml now."
-  echo
-  echo "Use the following SSH pubkey to setup GitLab:"
-  sudo cat "$pubkey"
+  if [ -f "$pubkey" ]; then
+    echo
+    echo "Use the following SSH pubkey to setup GitLab:"
+    sudo cat "$pubkey"
+  fi
 }
 
 parse_opts "$@"

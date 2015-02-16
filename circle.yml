@@ -1,18 +1,19 @@
 dependencies:
   override:
-    # Setup proxy
-    - ./scripts/setup-proxy.sh '' gitlab.com
-
-    # Fixup SSH key for access to gitlab.com
+    # Get a SSH key for access to gitlab.com
     - (echo '-----BEGIN RSA PRIVATE KEY-----'; echo $PRIVKEY | perl -pe 's/ /\n/g'; echo '-----END RSA PRIVATE KEY-----') > id_rsa
-    - sudo install -o git -m 0700 id_rsa ~git/.ssh/
-    - sudo rm ~git/.ssh/id_rsa.pub
 
-    # Use a fake gitosis-admin dir
+    # Generate a fake gitosis-admin dir
     - sudo cp -R test/gitosis-admin ~git/gitosis2gitlab/
     - mkdir -p pubkeys
     - ssh-add -L | head -n1 > pubkeys/testuser.pub
     - sudo cp -r pubkeys ~git/gitosis2gitlab/gitosis-admin/
+
+    # Setup proxy
+    - ./scripts/setup-proxy.sh -k id_rsa -a test/gitosis-admin '' gitlab.com
+
+    # Configure gitosis2gitlab
+    - sudo install -o git test/gitosis2gitlab.yaml ~git/gitosis2gitlab/
 
     # Setup DNS
     - echo '127.0.0.1 gitosis.example.com' | sudo tee -a /etc/hosts
