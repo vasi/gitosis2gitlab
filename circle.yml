@@ -4,10 +4,9 @@ dependencies:
     - (echo '-----BEGIN RSA PRIVATE KEY-----'; echo $PRIVKEY | perl -pe 's/ /\n/g'; echo '-----END RSA PRIVATE KEY-----') > id_rsa
 
     # Generate a fake gitosis-admin dir
-    - sudo cp -R test/gitosis-admin ~git/gitosis2gitlab/
-    - mkdir -p pubkeys
-    - ssh-add -L | head -n1 > pubkeys/testuser.pub
-    - sudo cp -r pubkeys ~git/gitosis2gitlab/gitosis-admin/
+    - cp -R test/gitosis-admin gitosis-admin
+    - mkdir -p gitosis-admin/pubkeys
+    - ssh-add -L | head -n1 > gitosis-admin/pubkeys/testuser.pub
 
     # Setup proxy
     - ./scripts/setup-proxy.sh -k id_rsa -a test/gitosis-admin '' gitlab.com
