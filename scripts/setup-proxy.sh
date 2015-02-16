@@ -99,7 +99,7 @@ install_gitosis2gitlab() {
 
   # Fetch the gitosis-admin directory, so we have the config files and such
   if [ ! -e "$homedir/gitosis2gitlab/gitosis-admin" ]; then
-    if [ -z "$admindir" ]; then
+    if [ -n "$admindir" ]; then
       sudo cp -R "$admindir" "$homedir/gitosis2gitlab/gitosis-admin"
     elif [ -n "$gitosis_server" ]; then
       git clone "$user@${gitosis_server}:gitosis-admin.git" \
