@@ -3,13 +3,16 @@ dependencies:
     # Get a SSH key for access to gitlab.com
     - (echo '-----BEGIN RSA PRIVATE KEY-----'; echo $PRIVKEY | perl -pe 's/ /\n/g'; echo '-----END RSA PRIVATE KEY-----') > id_rsa
 
+    # Generate a SSH key for access to gitosis
+    - ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ''
+
     # Generate a fake gitosis-admin dir
     - cp -R test/gitosis-admin gitosis-admin
-    - mkdir -p gitosis-admin/pubkeys
-    - ssh-add -L | head -n1 > gitosis-admin/pubkeys/testuser.pub
+    - mkdir -p gitosis-admin/keydir
+    - cp ~/.ssh/id_rsa.pub > gitosis-admin/keydir/testuser.pub
 
     # Setup proxy
-    - ./scripts/setup-proxy.sh -k id_rsa -a test/gitosis-admin '' gitlab.com
+    - ./scripts/setup-proxy.sh -k id_rsa -a gitosis-admin '' gitlab.com
 
     # Configure gitosis2gitlab
     - sudo install -o git test/gitosis2gitlab.yaml ~git/gitosis2gitlab/
