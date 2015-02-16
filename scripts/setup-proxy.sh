@@ -75,10 +75,12 @@ setup_ssh() {
     sudo -u "$user" tee -a "$homedir/.ssh/known_hosts" >/dev/null
 }
 
-install_gitosis2gitlab() {
-  # Get some prerequisites
-  sudo apt-get install -y git bundler
+ensure_prerequisites() {
+  git --version >/dev/null || apt-get install -y git
+  bundle --version >/dev/null || apt-get install -y bundler
+}
 
+install_gitosis2gitlab() {
   # Checkout gitosis2gitlab, install gems
   if [ ! -e "$homedir/gitosis2gitlab" ]; then
     sudo -u "$user" -i git clone https://gitlab.com/vasi/gitosis2gitlab.git
@@ -112,5 +114,6 @@ parse_opts "$@"
 copy_server_keys
 add_user
 setup_ssh
+ensure_prerequisites
 install_gitosis2gitlab
 summarize
