@@ -1,6 +1,4 @@
 #!/usr/bin/ruby
-
-require 'inifile'
 require 'fileutils'
 require 'yaml'
 
@@ -30,14 +28,34 @@ class GitosisConfig
     end
   end
 
+  # Parse a .ini format file
+  def self.ini_parse(io, &block)
+    name = nil
+    contents = {}
+
+    io.each do |line|
+      if md = /^\[(.*)\]$/.match(line)
+        # Yield the old section
+        yield name, contents if name
+
+        # Start a new section
+        name = md[1]
+        contents = {}
+      elsif md = /^(\w+)\s*=\s*(.*)/.match(line)
+        contents[md[1]] = md[2]
+      end
+    end
+    yield name, contents if name
+  end
+
   attr_reader :groups
   def initialize(conffile)
-    ini = IniFile.load(conffile)
-
     @groups = {}
-    ini.each_section do |name|
-      md = /^group (\S+)/.match(name) or next
-      groups[md[1]] = Group.new(self, ini[name])
+    open(conffile) do |f|
+      self.class.ini_parse(f) do |name, section|
+        md = /^group (\S+)/.match(name) or next
+        groups[md[1]] = Group.new(self, section)
+      end
     end
   end
 
@@ -71,8 +89,11 @@ class G2GConfig
     return gitlab_group + '/' + repo.gsub(%r{/}, Regexp.escape(dir_separator))
   end
 
-  def gitosis_config
+  def gitosis_admin
     return File.join(File.dirname(__FILE__), 'gitosis-admin')
+  end
+  def gitosis_config
+    return GitosisConfig.new(File.join(gitosis_admin, 'gitosis.conf'))
   end
 end
 
@@ -81,7 +102,7 @@ end
 def authorized_keys(config)
   # Generate authorized keys
   me = File.realpath($0)
-  keys = File.join(config.gitosis_config, 'keydir', '*.pub')
+  keys = File.join(config.gitosis_admin, 'keydir', '*.pub')
   Dir[keys].each do |keyfile|
     user = File.basename(keyfile, '.pub')
     key = IO.read(keyfile).chomp
@@ -100,8 +121,7 @@ def passthrough(config, user)
   repo = md[2]
   write = (command != 'git-upload-pack')
 
-  conffile = File.join(config.gitosis_config, 'gitosis.conf')
-  gitosis_config = GitosisConfig.new(conffile)
+  gitosis_config = config.gitosis_config
   gitosis_config.access?(user, repo, write) or raise "Access denied!"
 
   translated = config.translate(repo)
@@ -110,10 +130,23 @@ def passthrough(config, user)
   exec(*run)
 end
 
+# Check if a user has access to a repository
+def test_membership(config, user, repo, writable = nil)
+  gitosis_config = config.gitosis_config
+  if gitosis_config.access?(user, repo, writable)
+    puts "Access granted"
+    exit 0
+  else
+    puts "Access denied!"
+    exit -1
+  end
+end
+
 def run(args)
   config = G2GConfig.new
   cmd = args.shift
   case cmd
+    when 'access'; test_membership(config, *args)
     when 'authorized_keys'; authorized_keys(config)
     when 'passthrough'; passthrough(config, *args)
     else puts "Unknown command #{cmd}"
