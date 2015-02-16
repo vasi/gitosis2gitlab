@@ -31,6 +31,7 @@ If you can't or don't want to use the ```setup-proxy.sh``` script, you still can
   * gitosis2gitlab is written in Ruby, and uses the ```inifile``` gem. Make sure Ruby and that gem are installed.
   * To keep the same permissions as your gitosis setup, gitosis2gitlab needs your gitosis-admin directory. Clone it into the gitosis2gitlab directory.
 * To enable gitosis2gitlab, you generate an authorized_keys file based on the gitosis-admin directory. Run ```gitosis2gitlab.rb" authorized_keys```, and put the output into the user's ~/.ssh/authorized_keys file.
+* Since users already know the SSH key of the gitosis server, their SSH will warn them when they try to connect to the same domain, but it has a different SSH key. To fix this, you can copy the SSH host keys from the gitosis server to your gitosis2gitlab proxy server.
 
 If you also want to setup GitLab manually instead of using the ```setup-gitlab.rb``` and ```setup-repos.rb``` scripts, here's what to do:
 
