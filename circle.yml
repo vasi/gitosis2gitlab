@@ -1,12 +1,10 @@
 dependencies:
   override:
-    # Setup access to gitlab for our new user
-    - install -d -o git -m 0700 ~git/.ssh
-    - echo $PRIVKEY > id_rsa
-    - install -o git -m 0600 id_rsa ~git/.ssh/
-
     # Setup proxy
     - ./scripts/setup-proxy.sh '' gitlab.com
+
+    # Fixup SSH key for access to gitlab.com
+    - echo $PRIVKEY > ~git/.ssh/id_rsa
 
     # Use a fake gitosis-admin dir
     - cp -R test/gitosis-admin ~git/gitosis2gitlab/
