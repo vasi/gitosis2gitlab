@@ -3,7 +3,7 @@ set -e
 
 die() {
   echo "$@" 1>&2
-  exit -1
+  exit 2
 }
 
 setup() {
