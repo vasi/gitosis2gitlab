@@ -1,3 +1,5 @@
+[![Circle CI](https://circleci.com/gh/vasi/gitosis2gitlab.svg?style=svg)](https://circleci.com/gh/vasi/gitosis2gitlab)
+
 Once upon a time, the easiest way to setup a git server was with [Gitosis](http://git-scm.com/book/en/v1/Git-on-the-Server-Gitosis). But now, Gitosis hasn't been maintained for years! There's also much nicer ways to host  your own git repos, like [GitLab](https://about.gitlab.com/).
 
 Unfortunately, if you've been using Gitosis for years, you probably have lots of working copies sitting around the reference your Gitosis server. You may also have infrastructure that expects Gitosis remotes to stay working, such as continuous integration or issue tracking systems. If you move to GitLab, those will all break!
