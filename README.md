@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/vasi/gitosis2gitlab.svg?branch=master)](https://travis-ci.org/vasi/gitosis2gitlab)
 [![Circle CI](https://circleci.com/gh/vasi/gitosis2gitlab.svg?style=svg)](https://circleci.com/gh/vasi/gitosis2gitlab)
 
 Once upon a time, the easiest way to setup a git server was with [Gitosis](http://git-scm.com/book/en/v1/Git-on-the-Server-Gitosis). But now, Gitosis hasn't been maintained for years! There's also much nicer ways to host  your own git repos, like [GitLab](https://about.gitlab.com/).
