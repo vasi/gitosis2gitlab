@@ -62,7 +62,7 @@ test_accesses() {
 test_passthroughs() {
   out=$(SSH_ORIGINAL_COMMAND="git-upload-pack 'gitosis/gitlab.git'" \
     ruby ./gitosis2gitlab.rb passthrough testuser)
-  [ "$out" = "-i .ssh/id_rsa git@gitlab.example.com git-upload-pack imported/gitosis-gitlab.git" ] || die Bad passthrough SSH command
+  [ "$out" = "-i .ssh/id_rsa git@gitlab.example.com git-upload-pack imported/gitosis-gitlab.git" ] || die Bad passthrough SSH command: $out
 
   if ruby ./gitosis2gitlab.rb passthrough testuser 2>/dev/null; then
     die Missing SSH_ORIGINAL_COMMAND should cause error

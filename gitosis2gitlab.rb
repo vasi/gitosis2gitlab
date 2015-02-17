@@ -86,7 +86,7 @@ class G2GConfig
   end
 
   def translate(repo)
-    return gitlab_group + '/' + repo.gsub(%r{/}, Regexp.escape(dir_separator))
+    return gitlab_group + '/' + repo.gsub(%r{/}) { dir_separator }
   end
 
   def gitosis_admin
