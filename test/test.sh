@@ -7,7 +7,7 @@ die() {
 }
 
 setup() {
-  git co -- gitosis2gitlab.yaml
+  git checkout -- gitosis2gitlab.yaml
 
   rm -rf gitosis-admin
   cp -r test/gitosis-admin .
